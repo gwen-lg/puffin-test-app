@@ -2,6 +2,10 @@ use rand::random;
 use std::{thread, time};
 
 fn main() {
+	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
+	eprintln!("Serving demo profile data on {}", server_addr);
+	let _puffin_server = puffin_http::Server::new(&server_addr).unwrap();
+
 	puffin::set_scopes_on(true); // need this to enable capture
 
 	let mut loop_count = 0;
