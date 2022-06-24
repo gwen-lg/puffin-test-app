@@ -10,11 +10,14 @@ enum LoopBehavior {
 fn main() {
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);
-	let _puffin_server = puffin_http::Server::new(&server_addr).unwrap();
+	let puffin_server = puffin_http::Server::new(&server_addr).unwrap();
 
 	puffin::set_scopes_on(true); // need this to enable capture
 
-	let loop_behavior = LoopBehavior::Unlimited;
+	// wait client(s) connection
+	while puffin_server.num_clients() == 0 {}
+
+	let loop_behavior = LoopBehavior::Limited(10);
 
 	let mut loop_count = 0;
 	while continue_loop(loop_behavior, loop_count) {
