@@ -88,8 +88,8 @@ fn simulate_loading(behavior: LoadingBehavior, step: LoadingBehavior) {
 }
 
 fn compute_loop_duration() -> u64 {
-	const MIN_DURATION: u64 = 10;
-	const MAX_DURATION: u64 = 55;
+	const MIN_DURATION: u64 = 25;
+	const MAX_DURATION: u64 = 105;
 	let rand_value: u64 = random::<u64>() % (MAX_DURATION - MIN_DURATION);
 	MIN_DURATION + rand_value
 }

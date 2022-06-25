@@ -12,5 +12,8 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 clap = { version = "3.2", features = ["derive"] }
 rand = "0.8"
-puffin = "0.13"
-puffin_http = { path = "puffin/puffin_http" }
+puffin = { path = "../puffin/puffin", features = [
+    "packing",
+    "serialization",
+] }
+puffin_http = { path = "../puffin/puffin_http" }
