@@ -9,4 +9,4 @@ edition = "2021"
 [dependencies]
 rand = "0.8"
 puffin = "0.13"
-puffin_http = "0.10"
+puffin_http = { path = "puffin/puffin_http" }
