@@ -32,10 +32,17 @@ impl Default for LoadingBehavior {
 	}
 }
 
-#[derive(Default)]
+#[derive(Default, Parser)]
+#[clap(author, version, about, long_about = None)]
 struct AppBehavior {
+	/// Indicate to wait profiler connection before continue app execution
+	#[clap(short, long, value_parser, default_value_t = false)]
 	pub wait_profiler: bool,
+
+	#[clap(skip)]
 	pub loading: LoadingBehavior,
+
+	#[clap(skip)]
 	pub loop_behavior: LoopBehavior,
 }
 
@@ -48,7 +55,7 @@ fn main() {
 
 	puffin::set_scopes_on(true); // need this to enable capture
 
-	let app_behavior = AppBehavior::default();
+	let app_behavior = AppBehavior::parse();
 
 	// wait client(s) connection
 	if app_behavior.wait_profiler {
