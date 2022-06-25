@@ -24,6 +24,7 @@ enum LoadingBehavior {
 	None,
 	PreLoop,
 	FirstLoop,
+	//Threaded, TODO: add thread loading management
 }
 impl Default for LoadingBehavior {
 	fn default() -> Self {
