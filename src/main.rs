@@ -6,6 +6,11 @@ enum LoopBehavior {
 	Unlimited,
 	Limited(u32),
 }
+impl Default for LoopBehavior {
+	fn default() -> Self {
+		LoopBehavior::Unlimited
+	}
+}
 
 fn main() {
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
@@ -17,7 +22,7 @@ fn main() {
 	// wait client(s) connection
 	while puffin_server.num_clients() == 0 {}
 
-	let loop_behavior = LoopBehavior::Limited(10);
+	let loop_behavior = LoopBehavior::default();
 
 	let mut loop_count = 0;
 	while continue_loop(loop_behavior, loop_count) {
