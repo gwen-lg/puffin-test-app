@@ -14,6 +14,7 @@ impl Default for LoopBehavior {
 
 #[derive(Default)]
 struct AppBehavior {
+	pub wait_profiler: bool,
 	pub loop_behavior: LoopBehavior,
 }
 
@@ -27,7 +28,9 @@ fn main() {
 	let app_behavior = AppBehavior::default();
 
 	// wait client(s) connection
-	while puffin_server.num_clients() == 0 {}
+	if app_behavior.wait_profiler {
+		while puffin_server.num_clients() == 0 {}
+	}
 
 	let mut loop_count = 0;
 	while continue_loop(app_behavior.loop_behavior, loop_count) {
