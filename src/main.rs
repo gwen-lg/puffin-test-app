@@ -12,6 +12,11 @@ impl Default for LoopBehavior {
 	}
 }
 
+#[derive(Default)]
+struct AppBehavior {
+	pub loop_behavior: LoopBehavior,
+}
+
 fn main() {
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);
@@ -19,13 +24,13 @@ fn main() {
 
 	puffin::set_scopes_on(true); // need this to enable capture
 
+	let app_behavior = AppBehavior::default();
+
 	// wait client(s) connection
 	while puffin_server.num_clients() == 0 {}
 
-	let loop_behavior = LoopBehavior::default();
-
 	let mut loop_count = 0;
-	while continue_loop(loop_behavior, loop_count) {
+	while continue_loop(app_behavior.loop_behavior, loop_count) {
 		puffin::profile_scope!("main_loop", format!("loop num : {}", loop_count));
 		puffin::GlobalProfiler::lock().new_frame();
 		loop_count += 1;
