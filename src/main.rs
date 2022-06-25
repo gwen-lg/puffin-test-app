@@ -1,17 +1,27 @@
-use clap::Parser;
+use clap::{Args, Parser, Subcommand, ValueEnum};
 use rand::random;
 use std::{thread, time};
 
+#[derive(Clone, ValueEnum)]
+//#[clap(ARG ENUM ATTRIBUTE)]
+enum EnumValues {
+	/// Doc comment
+	//#[clap(POSSIBLE VALUE ATTRIBUTE)]
+	Limited,
+}
 
-#[derive(Parser)]
-#[clap(name = "Puffin-Test-App")]
-#[clap(author, version, about, long_about = None)]
-struct Args {}
+#[derive(Args, Clone, Copy, Debug)]
+//#[clap(PARENT APP ATTRIBUTE)]
+struct Struct {
+	/// Doc comment
+	//#[clap(ARG ATTRIBUTE)]
+	field: u32,
+}
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Subcommand)]
 enum LoopBehavior {
 	Unlimited,
-	Limited(u32),
+	Limited(Struct),
 }
 impl Default for LoopBehavior {
 	fn default() -> Self {
@@ -32,7 +42,9 @@ impl Default for LoadingBehavior {
 	}
 }
 
-#[derive(Default, Parser)]
+
+#[derive(Parser)]
+#[clap(name = "Puffin-Test-App")]
 #[clap(author, version, about, long_about = None)]
 struct AppBehavior {
 	/// Indicate to wait profiler connection before continue app execution
@@ -43,20 +55,18 @@ struct AppBehavior {
 	#[clap(short, long, value_enum, default_value_t = LoadingBehavior::None)]
 	pub loading: LoadingBehavior,
 
-	#[clap(skip)]
+	#[clap(subcommand)] //TODO: enable loop behavior management
 	pub loop_behavior: LoopBehavior,
 }
 
 fn main() {
-	let _args = Args::parse();
+	let app_behavior = AppBehavior::parse();
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);
 	let puffin_server = puffin_http::Server::new(&server_addr).unwrap();
 
 	puffin::set_scopes_on(true); // need this to enable capture
-
-	let app_behavior = AppBehavior::parse();
 
 	// wait client(s) connection
 	if app_behavior.wait_profiler {
@@ -105,7 +115,7 @@ fn compute_loop_duration() -> u64 {
 fn continue_loop(loop_behavior: LoopBehavior, loop_count: u32) -> bool {
 	let continue_loop = match loop_behavior {
 		LoopBehavior::Unlimited => true,
-		LoopBehavior::Limited(limit) => loop_count < limit,
+		LoopBehavior::Limited(limit) => loop_count < limit.field,
 	};
 	continue_loop
 }
