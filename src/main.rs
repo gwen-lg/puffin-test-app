@@ -19,7 +19,7 @@ impl Default for LoopBehavior {
 	}
 }
 
-#[derive(PartialEq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy, clap::ValueEnum)]
 enum LoadingBehavior {
 	None,
 	PreLoop,
@@ -39,7 +39,8 @@ struct AppBehavior {
 	#[clap(short, long, value_parser, default_value_t = false)]
 	pub wait_profiler: bool,
 
-	#[clap(skip)]
+	/// Choose loading behavior of the test app
+	#[clap(short, long, value_enum, default_value_t = LoadingBehavior::None)]
 	pub loading: LoadingBehavior,
 
 	#[clap(skip)]
