@@ -12,9 +12,22 @@ impl Default for LoopBehavior {
 	}
 }
 
+#[derive(PartialEq, Clone, Copy)]
+enum LoadingBehavior {
+	None,
+	PreLoop,
+	FirstLoop,
+}
+impl Default for LoadingBehavior {
+	fn default() -> Self {
+		LoadingBehavior::None
+	}
+}
+
 #[derive(Default)]
 struct AppBehavior {
 	pub wait_profiler: bool,
+	pub loading: LoadingBehavior,
 	pub loop_behavior: LoopBehavior,
 }
 
@@ -32,10 +45,18 @@ fn main() {
 		while puffin_server.num_clients() == 0 {}
 	}
 
+	simulate_loading(app_behavior.loading, LoadingBehavior::PreLoop);
+
 	let mut loop_count = 0;
 	while continue_loop(app_behavior.loop_behavior, loop_count) {
 		puffin::profile_scope!("main_loop", format!("loop num : {}", loop_count));
 		puffin::GlobalProfiler::lock().new_frame();
+
+		if loop_count == 0 {
+			// Big sleep to simulate loading
+			simulate_loading(app_behavior.loading, LoadingBehavior::FirstLoop);
+		}
+
 		loop_count += 1;
 
 		let loop_duration = compute_loop_duration();
@@ -45,6 +66,14 @@ fn main() {
 			thread::sleep(sleep_duration);
 		}
 		println!("loop {} duration {}ms", loop_count, loop_duration);
+	}
+}
+
+fn simulate_loading(behavior: LoadingBehavior, step: LoadingBehavior) {
+	if behavior == step {
+		puffin::profile_scope!("loading");
+		let sleep_duration = time::Duration::from_secs(5);
+		thread::sleep(sleep_duration);
 	}
 }
 
