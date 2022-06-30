@@ -4,6 +4,7 @@ use std::{thread, time};
 
 
 #[derive(Parser)]
+#[clap(name = "Puffin-Test-App")]
 #[clap(author, version, about, long_about = None)]
 struct Args {}
 
