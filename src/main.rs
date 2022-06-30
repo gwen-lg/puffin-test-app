@@ -1,5 +1,10 @@
+use clap::Parser;
 use rand::random;
 use std::{thread, time};
+
+#[derive(Parser)]
+#[clap(author, version, about, long_about = None)]
+struct Args {}
 
 #[derive(Clone, Copy)]
 enum LoopBehavior {
@@ -8,6 +13,8 @@ enum LoopBehavior {
 }
 
 fn main() {
+	let _args = Args::parse();
+
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);
 	let _puffin_server = puffin_http::Server::new(&server_addr).unwrap();
