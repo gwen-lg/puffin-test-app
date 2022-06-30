@@ -1,5 +1,6 @@
 [package]
 name = "puffin-test-app"
+description = "This is an application to test various usage of puffin (with puffin_http and external viewer)"
 version = "0.1.0"
 edition = "2021"
 
