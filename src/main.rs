@@ -1,5 +1,6 @@
 mod behavior;
 
+use behavior::{LoadingBehavior, LoopBehavior};
 use clap::Parser;
 use rand::random;
 use simplelog::{Config, LevelFilter, SimpleLogger};
@@ -7,8 +8,6 @@ use std::{
 	thread::{self, JoinHandle},
 	time,
 };
-
-use behavior::{LoadingBehavior, LoopBehavior};
 
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
