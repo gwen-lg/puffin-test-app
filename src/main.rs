@@ -9,10 +9,14 @@ use behavior::LoopBehavior;
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
 #[clap(author, version, about, long_about = None)]
-struct Args {}
+struct Args {
+	/// Indicate the number of loop wanted. -1 is for unlimited.
+	#[clap(short, long, default_value_t = -1)]
+	nb_loop: i32,
+}
 
 fn main() {
-	let _args = Args::parse();
+	let args = Args::parse();
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);
@@ -20,7 +24,7 @@ fn main() {
 
 	puffin::set_scopes_on(true); // need this to enable capture
 
-	let loop_behavior = LoopBehavior::Unlimited;
+	let loop_behavior = behavior::compute_loop_behavior(args.nb_loop);
 
 	let mut loop_count = 0;
 	while continue_loop(loop_behavior, loop_count) {
