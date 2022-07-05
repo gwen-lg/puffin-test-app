@@ -14,6 +14,10 @@ struct Args {
 	/// Set the level of logging in console
 	#[clap(short, long, default_value_t = LevelFilter::Info)]
 	pub log_level: LevelFilter,
+
+	/// Indicate the number of loop wanted. -1 is for unlimited.
+	#[clap(short, long, default_value_t = -1)]
+	nb_loop: i32,
 }
 
 fn main() {
@@ -28,7 +32,7 @@ fn main() {
 
 	puffin::set_scopes_on(true); // need this to enable capture
 
-	let loop_behavior = LoopBehavior::Unlimited;
+	let loop_behavior = behavior::compute_loop_behavior(args.nb_loop);
 
 	let mut loop_count = 0;
 	while continue_loop(loop_behavior, loop_count) {
