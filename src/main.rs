@@ -1,17 +1,15 @@
+mod behavior;
+
 use clap::Parser;
 use rand::random;
 use std::{thread, time};
+
+use behavior::LoopBehavior;
 
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
 #[clap(author, version, about, long_about = None)]
 struct Args {}
-
-#[derive(Clone, Copy)]
-enum LoopBehavior {
-	Unlimited,
-	Limited(u32),
-}
 
 fn main() {
 	let _args = Args::parse();
