@@ -1,7 +1,11 @@
+mod behavior;
+
 use clap::Parser;
 use rand::random;
 use simplelog::{Config, LevelFilter, SimpleLogger};
 use std::{thread, time};
+
+use behavior::LoopBehavior;
 
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
@@ -10,12 +14,6 @@ struct Args {
 	/// Set the level of logging in console
 	#[clap(short, long, default_value_t = LevelFilter::Info)]
 	pub log_level: LevelFilter,
-}
-
-#[derive(Clone, Copy)]
-enum LoopBehavior {
-	Unlimited,
-	Limited(u32),
 }
 
 fn main() {
