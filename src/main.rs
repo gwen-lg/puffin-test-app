@@ -13,6 +13,10 @@ struct Args {
 	/// Indicate the number of loop wanted. -1 is for unlimited.
 	#[clap(short, long, default_value_t = -1)]
 	nb_loop: i32,
+
+	/// Indicate if the app should wait profiler connection before start running.
+	#[clap(short, long)]
+	wait_profiler: bool,
 }
 
 fn main() {
@@ -20,9 +24,14 @@ fn main() {
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);
-	let _puffin_server = puffin_http::Server::new(&server_addr).unwrap();
+	let puffin_server = puffin_http::Server::new(&server_addr).unwrap();
 
 	puffin::set_scopes_on(true); // need this to enable capture
+	if args.wait_profiler {
+		eprint!("Wait puffin client on {} ...", server_addr);
+		while puffin_server.num_clients() == 0 {} //HACK: wait a proper method in puffin_http
+		eprintln!(" Ok");
+	}
 
 	let loop_behavior = behavior::compute_loop_behavior(args.nb_loop);
 
