@@ -48,6 +48,9 @@ fn main() {
 		puffin::profile_scope!("main_loop", format!("loop num : {}", loop_count));
 		puffin::GlobalProfiler::lock().new_frame();
 
+		let start_time = time::Instant::now();
+		println!("loop {} ... start", loop_count);
+
 		if loop_count == 0 {
 			// Big sleep to simulate loading
 			simulate_loading(args.loading, LoadingBehavior::FirstLoop);
@@ -59,7 +62,13 @@ fn main() {
 			let sleep_duration = time::Duration::from_millis(loop_duration);
 			thread::sleep(sleep_duration);
 		}
-		println!("loop {} duration {}ms", loop_count, loop_duration);
+
+		let loop_duration = time::Instant::now() - start_time;
+		println!(
+			"loop {} duration {}ms",
+			loop_count,
+			loop_duration.as_millis()
+		);
 	}
 
 	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
