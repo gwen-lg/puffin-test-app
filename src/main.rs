@@ -26,9 +26,10 @@ fn main() {
 
 	let mut loop_count = 0;
 	while continue_loop(loop_behavior, loop_count) {
+		loop_count += 1;
+
 		puffin::profile_scope!("main_loop", format!("loop num : {}", loop_count));
 		puffin::GlobalProfiler::lock().new_frame();
-		loop_count += 1;
 
 		let loop_duration = compute_loop_duration();
 		{
