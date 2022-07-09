@@ -3,7 +3,10 @@ mod behavior;
 use clap::Parser;
 use rand::random;
 use simplelog::{Config, LevelFilter, SimpleLogger};
-use std::{thread, time};
+use std::{
+	thread::{self, JoinHandle},
+	time,
+};
 
 use behavior::{LoadingBehavior, LoopBehavior};
 
@@ -38,6 +41,16 @@ fn main() {
 
 	simulate_loading(args.loading, LoadingBehavior::PreLoop);
 
+	let loading_thread_handle = if args.loading == LoadingBehavior::Threaded {
+		let thread_handle = thread::Builder::new()
+			.name("Loading".to_string())
+			.spawn(loading)
+			.unwrap();
+		Some(thread_handle)
+	} else {
+		None
+	};
+
 	let loop_behavior = behavior::compute_loop_behavior(args.nb_loop);
 
 	let mut loop_count = 0;
@@ -70,7 +83,33 @@ fn main() {
 		);
 	}
 
+	wait_end_loading(loading_thread_handle);
+
 	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
+}
+
+fn loading() {
+	puffin::profile_scope!("Threaded loading");
+	println!("loading started");
+	let loading_duration = 7;
+	let sleep_duration = time::Duration::from_secs(loading_duration);
+	thread::sleep(sleep_duration);
+	println!("loading duration {}s", loading_duration);
+}
+
+fn wait_end_loading(loading_thread_handle: Option<JoinHandle<()>>) {
+	// wait end of loading if needed
+	if let Some(thread_handle) = loading_thread_handle {
+		let start_time = time::Instant::now();
+		match thread_handle.join() {
+			Ok(()) => {}
+			Err(err) => {
+				eprintln!("Loading thread error : {:?}", err);
+			}
+		}
+		let wait_duration = time::Instant::now() - start_time;
+		println!("loading thread waited {}ms", wait_duration.as_millis());
+	}
 }
 
 fn simulate_loading(behavior: LoadingBehavior, step: LoadingBehavior) {
