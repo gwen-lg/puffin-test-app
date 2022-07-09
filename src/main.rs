@@ -24,6 +24,10 @@ struct Args {
 	/// Choose loading behavior of the simulation
 	#[clap(long, value_enum, default_value_t = LoadingBehavior::None)]
 	loading: LoadingBehavior,
+
+	/// Indicate if the app should wait profiler connection before start running.
+	#[clap(short, long, default_value_t = false)]
+	wait_profiler: bool,
 }
 
 fn main() {
@@ -34,9 +38,15 @@ fn main() {
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	log::info!("Serving demo profile data on {}", server_addr);
-	let _puffin_server = puffin_http::Server::new(&server_addr).unwrap();
+	let puffin_server = puffin_http::Server::new(&server_addr).unwrap();
 
 	puffin::set_scopes_on(true); // need this to enable capture
+
+	if args.wait_profiler {
+		log::info!("Wait puffin client on {} ...", server_addr);
+		while puffin_server.num_clients() == 0 {} //HACK: wait a proper method in puffin_http
+		log::info!(" Wait puffin client => Ok");
+	}
 
 	simulate_loading(args.loading, LoadingBehavior::PreLoop);
 
