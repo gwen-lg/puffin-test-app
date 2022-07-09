@@ -17,6 +17,7 @@ pub enum LoadingBehavior {
 	None,
 	PreLoop,
 	FirstLoop,
+	Threaded,
 }
 impl Default for LoadingBehavior {
 	fn default() -> Self {
