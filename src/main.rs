@@ -4,7 +4,7 @@ use clap::Parser;
 use rand::random;
 use std::{thread, time};
 
-use behavior::LoopBehavior;
+use behavior::{LoadingBehavior, LoopBehavior};
 
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
@@ -17,6 +17,10 @@ struct Args {
 	/// Indicate if the app should wait profiler connection before start running.
 	#[clap(short, long)]
 	wait_profiler: bool,
+
+	/// Choose loading behavior of the simulation
+	#[clap(short, long, value_enum, default_value_t = LoadingBehavior::None)]
+	loading: LoadingBehavior,
 }
 
 fn main() {
@@ -33,6 +37,8 @@ fn main() {
 		eprintln!(" Ok");
 	}
 
+	simulate_loading(args.loading, LoadingBehavior::PreLoop);
+
 	let loop_behavior = behavior::compute_loop_behavior(args.nb_loop);
 
 	let mut loop_count = 0;
@@ -41,6 +47,11 @@ fn main() {
 
 		puffin::profile_scope!("main_loop", format!("loop num : {}", loop_count));
 		puffin::GlobalProfiler::lock().new_frame();
+
+		if loop_count == 0 {
+			// Big sleep to simulate loading
+			simulate_loading(args.loading, LoadingBehavior::FirstLoop);
+		}
 
 		let loop_duration = compute_loop_duration();
 		{
@@ -52,6 +63,16 @@ fn main() {
 	}
 
 	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
+}
+
+fn simulate_loading(behavior: LoadingBehavior, step: LoadingBehavior) {
+	if behavior == step {
+		puffin::profile_scope!("loading");
+		let loading_duration = 5;
+		let sleep_duration = time::Duration::from_secs(loading_duration);
+		println!("loading duration {}s", loading_duration);
+		thread::sleep(sleep_duration);
+	}
 }
 
 fn compute_loop_duration() -> u64 {
