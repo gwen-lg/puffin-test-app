@@ -11,3 +11,15 @@ pub fn compute_loop_behavior(nb_loop: i32) -> LoopBehavior {
 		LoopBehavior::Limited(nb_loop as u32)
 	}
 }
+
+#[derive(PartialEq, Eq, Clone, Copy, clap::ValueEnum)]
+pub enum LoadingBehavior {
+	None,
+	PreLoop,
+	FirstLoop,
+}
+impl Default for LoadingBehavior {
+	fn default() -> Self {
+		LoadingBehavior::None
+	}
+}
