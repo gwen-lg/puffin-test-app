@@ -5,7 +5,7 @@ use rand::random;
 use simplelog::{Config, LevelFilter, SimpleLogger};
 use std::{thread, time};
 
-use behavior::LoopBehavior;
+use behavior::{LoadingBehavior, LoopBehavior};
 
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
@@ -18,6 +18,10 @@ struct Args {
 	/// Indicate the number of loop wanted. -1 is for unlimited.
 	#[clap(short, long, default_value_t = -1)]
 	nb_loop: i32,
+
+	/// Choose loading behavior of the simulation
+	#[clap(long, value_enum, default_value_t = LoadingBehavior::None)]
+	loading: LoadingBehavior,
 }
 
 fn main() {
@@ -32,6 +36,8 @@ fn main() {
 
 	puffin::set_scopes_on(true); // need this to enable capture
 
+	simulate_loading(args.loading, LoadingBehavior::PreLoop);
+
 	let loop_behavior = behavior::compute_loop_behavior(args.nb_loop);
 
 	let mut loop_count = 0;
@@ -40,6 +46,11 @@ fn main() {
 
 		puffin::profile_scope!("main_loop", format!("loop num : {}", loop_count));
 		puffin::GlobalProfiler::lock().new_frame();
+
+		if loop_count == 0 {
+			// Big sleep to simulate loading
+			simulate_loading(args.loading, LoadingBehavior::FirstLoop);
+		}
 
 		let loop_duration = compute_loop_duration();
 		{
@@ -51,6 +62,16 @@ fn main() {
 	}
 
 	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
+}
+
+fn simulate_loading(behavior: LoadingBehavior, step: LoadingBehavior) {
+	if behavior == step {
+		puffin::profile_scope!("loading");
+		let loading_duration = 5;
+		let sleep_duration = time::Duration::from_secs(loading_duration);
+		println!("loading duration {}s", loading_duration);
+		thread::sleep(sleep_duration);
+	}
 }
 
 fn compute_loop_duration() -> u64 {
