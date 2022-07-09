@@ -39,6 +39,8 @@ fn main() {
 		}
 		println!("loop {} duration {}ms", loop_count, loop_duration);
 	}
+
+	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
 }
 
 fn compute_loop_duration() -> u64 {
