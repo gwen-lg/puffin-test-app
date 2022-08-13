@@ -6,7 +6,11 @@ use std::{thread, time};
 #[derive(Parser)]
 #[clap(name = "Puffin-Test-App")]
 #[clap(author, version, about, long_about = None)]
-struct Args {}
+struct Args {
+	/// Set the level of logging in console
+	#[clap(short, long, default_value_t = LevelFilter::Info)]
+	pub log_level: LevelFilter,
+}
 
 #[derive(Clone, Copy)]
 enum LoopBehavior {
@@ -15,8 +19,10 @@ enum LoopBehavior {
 }
 
 fn main() {
-	let _args = Args::parse();
-	SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
+	let args = Args::parse();
+
+	let filter_level = args.log_level;
+	SimpleLogger::init(filter_level, Config::default()).unwrap();
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	log::info!("Serving demo profile data on {}", server_addr);
