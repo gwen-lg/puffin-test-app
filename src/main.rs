@@ -51,9 +51,8 @@ fn compute_loop_duration() -> u64 {
 }
 
 fn continue_loop(loop_behavior: LoopBehavior, loop_count: u32) -> bool {
-	let continue_loop = match loop_behavior {
+	match loop_behavior {
 		LoopBehavior::Unlimited => true,
 		LoopBehavior::Limited(limit) => loop_count < limit,
-	};
-	continue_loop
+	}
 }
