@@ -1,5 +1,6 @@
 use clap::Parser;
 use rand::random;
+use simplelog::{Config, LevelFilter, SimpleLogger};
 use std::{thread, time};
 
 #[derive(Parser)]
@@ -15,6 +16,7 @@ enum LoopBehavior {
 
 fn main() {
 	let _args = Args::parse();
+	SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
 	eprintln!("Serving demo profile data on {}", server_addr);

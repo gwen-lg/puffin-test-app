@@ -14,3 +14,4 @@ clap = { version = "3.2", features = ["derive"] }
 rand = "0.8"
 puffin = "0.13"
 puffin_http = "0.10"
+simplelog = "0.12"
