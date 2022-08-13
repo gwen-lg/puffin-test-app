@@ -19,7 +19,7 @@ fn main() {
 	SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
 
 	let server_addr = format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
-	eprintln!("Serving demo profile data on {}", server_addr);
+	log::info!("Serving demo profile data on {}", server_addr);
 	let _puffin_server = puffin_http::Server::new(&server_addr).unwrap();
 
 	puffin::set_scopes_on(true); // need this to enable capture
@@ -39,7 +39,7 @@ fn main() {
 			let sleep_duration = time::Duration::from_millis(loop_duration);
 			thread::sleep(sleep_duration);
 		}
-		println!("loop {} duration {}ms", loop_count, loop_duration);
+		log::info!("loop {} duration {}ms", loop_count, loop_duration);
 	}
 
 	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
