@@ -64,3 +64,9 @@ fn continue_loop(loop_behavior: LoopBehavior, loop_count: u32) -> bool {
 		LoopBehavior::Limited(limit) => loop_count < limit,
 	}
 }
+
+#[test]
+fn verify_cli() {
+	use clap::CommandFactory;
+	Args::command().debug_assert()
+}
