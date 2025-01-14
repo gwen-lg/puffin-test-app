@@ -16,3 +16,8 @@ rand = "0.8"
 puffin = "0.19"
 puffin_http = "0.16"
 simplelog = "0.12"
+
+[patch.crates-io]
+puffin = { path = "../puffin/puffin" }
+puffin_http = { path = "../puffin/puffin_http" }
+async-lock = { path = "../_crates/async-lock" }
