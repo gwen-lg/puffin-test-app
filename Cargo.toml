@@ -12,7 +12,7 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
 log = "0.4"
-rand = "0.8"
 puffin = "0.19"
 puffin_http = "0.16"
+rand = "0.8"
 simplelog = "0.12"
