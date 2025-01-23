@@ -1,10 +1,14 @@
 mod behavior;
+mod mem_track;
 
+use alloc_track::{AllocTrack, BacktraceMode};
 use behavior::{LoadingBehavior, LoopBehavior};
 use clap::Parser;
+use mem_track::MemTrack;
 use rand::random;
 use simplelog::{Config, LevelFilter, SimpleLogger};
 use std::{
+	alloc::System,
 	thread::{self, JoinHandle},
 	time,
 };
@@ -24,10 +28,18 @@ struct Args {
 	/// Choose loading behavior of the simulation
 	#[clap(long, value_enum, default_value_t = LoadingBehavior::None)]
 	loading: LoadingBehavior,
+
+	/// Enable memory tracking/report
+	#[clap(short, long, default_value_t = false)]
+	mem_alloc_report: bool,
 }
+
+#[global_allocator]
+static GLOBAL_ALLOC: AllocTrack<System> = AllocTrack::new(System, BacktraceMode::Short);
 
 fn main() {
 	let args = Args::parse();
+	let mem_track = MemTrack::init();
 
 	let filter_level = args.log_level;
 	SimpleLogger::init(filter_level, Config::default()).unwrap();
@@ -85,6 +97,13 @@ fn main() {
 	wait_end_loading(loading_thread_handle);
 
 	puffin::GlobalProfiler::lock().new_frame(); // Needed to finalise last loop frame
+
+	if args.mem_alloc_report {
+		let report_err = mem_track.report();
+		if let Err(err) = report_err {
+			eprintln!("Error during Memory tracking report writing : {err}")
+		}
+	}
 }
 
 fn loading() {
