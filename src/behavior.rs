@@ -12,11 +12,10 @@ pub fn compute_loop_behavior(nb_loop: i32) -> LoopBehavior {
 	}
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, clap::ValueEnum)]
-#[derive(Default)]
+#[derive(PartialEq, Eq, Clone, Copy, clap::ValueEnum, Default)]
 pub enum LoadingBehavior {
 	#[default]
- None,
+	None,
 	PreLoop,
 	FirstLoop,
 	Threaded,
