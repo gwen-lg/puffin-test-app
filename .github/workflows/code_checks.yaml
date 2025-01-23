@@ -70,11 +70,11 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "|Job|Status|" >> $GITHUB_STEP_SUMMARY
           echo "|---|------|" >> $GITHUB_STEP_SUMMARY
+          echo "|typos|${{ steps.typos_check.outcome}}|" >> $GITHUB_STEP_SUMMARY
+          echo "|Cargo fmt|${{ steps.cargo_fmt.outcome }}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo clippy|${{ steps.cargo_clippy.outcome }}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo test|${{ steps.cargo_test.outcome }}|" >> $GITHUB_STEP_SUMMARY
-          echo "|Cargo fmt|${{ steps.cargo_fmt.outcome }}|" >> $GITHUB_STEP_SUMMARY
           echo "|Cargo build|${{ steps.cargo_build.outcome }}|" >> $GITHUB_STEP_SUMMARY
-          echo "|typos|${{ steps.typos_check.outcome}}|" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Please check the failed jobs and fix where needed." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
